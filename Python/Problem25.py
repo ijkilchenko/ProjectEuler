@@ -1,3 +1,7 @@
+"""
+Author: Alexey Ilchenko
+Problem 25 of Project Euler
+"""
 def run():
     n= 0
     i= 0

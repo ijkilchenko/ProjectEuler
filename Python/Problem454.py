@@ -5,18 +5,18 @@ Problem 454 of Project Euler INCOMPLETE
 import math
 
 def run():
-    power= 2
+    power= 4
     L= int(math.pow(10,power))
-    l= [0 for i in range(0,L)]
+    #l= [0 for i in range(0,L)]
     c= 0
     for j in range(2,L+1):
         for i in range(1,j):
             if ((i*j)%(i+j) == 0):
-                print(str(i)+ " " +str(j))
+                #print(str(i)+ " " +str(j))
                 #print(float(j)/i)
                 #l[int(float(j)/i)]= 1
                 c= c + 1
-    print(l)
+    #print(l)
     print(c)
 
 """
