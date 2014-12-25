@@ -12,7 +12,6 @@ def run():
         if (current >= longest) :
             longest = current
             print(d)
-            print(longest)
         d = d + 1
     
     
@@ -23,7 +22,7 @@ def getDecimalFraction(d):
     lastR = p % d
     l =[]
     newElem = math.floor(p/d)
-    l.append(newElem)
+    l.append(lastR)
     #print(l[-1])
     p = lastR * 10
     
@@ -31,16 +30,16 @@ def getDecimalFraction(d):
         lastR = p % d
         newElem = math.floor(p/d)
         try:
-            index = l.index(newElem)
+            index = l.index(lastR)
             return (len(l) - index)
         except ValueError:
-            l.append(newElem)
+            l.append(lastR)
             #print(l[-1])
             p = lastR * 10
 
     try:
         newElem = math.floor(p/d)
-        index = l.index(newElem)
+        index = l.index(lastR)
         return (len(l) - index)
     except ValueError:
         return 0
