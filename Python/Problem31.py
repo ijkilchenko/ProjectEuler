@@ -1,8 +1,5 @@
 d = {}
 
-global count
-count = 0
-
 def getNums(n):
     return getNum(n, 0, 0, 0, 0, 0, 0, 0, 0)
 
@@ -10,9 +7,6 @@ def getNum(n, i, j, k, l, m, o, p, q):
     total = i + 2*j + 5*k + 10*l + 20*m + 50*o + 100*p + 200*q
     try:
         if (d[n] > 0):
-            if (total == 200):
-                global count
-                count = count + 1
             return d[n]
     except KeyError :
         num = 1
@@ -34,8 +28,7 @@ def getNum(n, i, j, k, l, m, o, p, q):
             num = getNum(n - 100, i, j, k, l, m, o, p + 1, q) + getNum(n - 50, i, j, k, l, m, o + 1, p, q) + getNum(n - 20, i, j, k, l, m + 1, o, p, q) + getNum(n - 10, i, j, k, l + 1, m, o, p, q) + getNum(n - 5, i, j, k + 1, l, m, o, p, q) + getNum(n - 2, i, j + 1, k, l, m, o, p, q) + getNum(n - 1, i + 1, j, k, l, m, o, p, q)
         if (n == 200):
             num = getNum(n - 200, i, j, k, l, m, o, p, q + 1) + getNum(n - 100, i, j, k, l, m, o, p + 1, q) + getNum(n - 50, i, j, k, l, m, o + 1, p, q) + getNum(n - 20, i, j, k, l, m + 1, o, p, q) + getNum(n - 10, i, j, k, l + 1, m, o, p, q) + getNum(n - 5, i, j, k + 1, l, m, o, p, q) + getNum(n - 2, i, j + 1, k, l, m, o, p, q) + getNum(n - 1, i + 1, j, k, l, m, o, p, q)
-        d[n] = num
+        d[total] = num
         return num
 
-print(getNums(200))
-print(count)
+print(getNums(5))
