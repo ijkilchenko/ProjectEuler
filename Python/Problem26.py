@@ -44,5 +44,6 @@ def getDecimalFraction(d):
     except ValueError:
         return 0
     
-run()
+#run()
+print(getDecimalFraction(41))
 
