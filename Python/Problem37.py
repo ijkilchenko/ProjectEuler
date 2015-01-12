@@ -1,5 +1,6 @@
 import utilsPrimes as utils
 import math
+import time
 
 def getListOfTruncations(n):
     l = []
@@ -29,4 +30,7 @@ def solve():
         i = i + 1
     return summ
 
+start = time.time()
 print(solve())
+end = time.time()
+print(end - start)

@@ -36,6 +36,8 @@ def getPrimes(primes) :
     for j in range(3, lastPrime):
         if (primes[j] != 0):
             k = math.floor(lastPrime/j) + 1
+            if (j > k):
+                k = j
             mul = j*k
             while (mul < n):
                 primes[mul] = 0
