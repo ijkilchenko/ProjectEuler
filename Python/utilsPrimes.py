@@ -1,48 +1,76 @@
 import math
+import copy
 
-primes = []
+primes = [2, 3, 5, 7]
 
 def isPrime(n) :
+    global primes
     if (n < 2) :
         return False
-    else :
-        if (n < len(primes)) :
-            if (primes[n] == 0) :
-                return False
-            else :
-                return True
-        else :
-            global primes
-            primes = getPrimes(primes)
-            return isPrime(n)
+    else:
+        if (n != 2 and n % 2 == 0):
+            return False
+        else:                
+            if (math.floor(n/2) < len(primes)) :
+                if (primes[math.floor(n/2)] == 0) :
+                    return False
+                else:
+                    return True
+            else:
+                primes = getPrimes(primes)
+                return isPrime(n)
+factors = {}
 
-def getPrimes(primes) :
-    newPrimes = []
-    i = 0
+def getPrimeFactors(n):
+    if (n == 1):
+        return
+    else:
+        num = n
+        try:
+            return factors[num]
+        except KeyError:
+            if (isPrime(n)):
+                return {n : 1}
+            i = 2
+            while (n%i != 0):
+                if (i == 2):
+                    i = i + 1
+                else:
+                    i = i + 2
+            n = n/i
+            ff = copy.deepcopy(getPrimeFactors(n))
+            
+            try:
+                if (ff[i] > 0):
+                    count = ff[i]
+                    ff[i] = count + 1
+            except KeyError:
+                ff[i] = 1
+                
+            factors[num] = ff
+            return factors[num]
+
+def getPrimes(primes):
     n = 2*len(primes)
-    while (i < len(primes)):
-        newPrimes.append(primes[i])
-        i = i + 1
-
-    while (i < n):
+    lastPrime = math.floor(2*len(primes)) - 1
+    i = lastPrime + 2
+    while (i < 2*n):
         if (i % 2 == 0):
-            newPrimes.append(0)
+            i = i + 1
         else :
-            newPrimes.append(i)
-        i = i + 1
-    lastPrime = len(primes)
-    primes = newPrimes
+            primes.append(i)
+            i = i + 2
 
-    for j in range(3, lastPrime):
+    for j in range(1, lastPrime):
         if (primes[j] != 0):
-            k = math.floor(lastPrime/j) + 1
-            if (j > k):
-                k = j
-            mul = j*k
-            while (mul < n):
-                primes[mul] = 0
+            k = math.floor(lastPrime/primes[j]) + 1
+            if (k % 2 == 0):
                 k = k + 1
-                mul = j*k
+            if (primes[j] > k):
+                k = primes[j]
+            mul = primes[j]*k
+            while (mul < 2*n):
+                primes[math.floor(mul/2)] = 0
+                k = k + 2
+                mul = primes[j]*k
     return primes
-
-primes = [0, 1, 2, 3, 0, 5, 0, 7, 0, 0, 0]
