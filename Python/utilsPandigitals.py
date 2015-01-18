@@ -3,15 +3,14 @@ def getListOfPermutations(string):
         return ['']
     else:
         l = []
-        for e in string:
-            temp = string
-            temp = temp.replace(e, '')
+        for j in range(0, len(string)):
+            temp = string[:j] + string[j+1:]
             ll = getListOfPermutations(temp)
             if (ll == ['']):
-                l.append(e)
+                l.append(string[j])
             else:
                 for i in ll:
-                    s = e + i
+                    s = string[j] + i
                     l.append(s)
         return l
 

@@ -3,6 +3,11 @@ import copy
 
 primes = [2, 3, 5, 7]
 
+def nextPrime(n):
+    while (not isPrime(n+1)):
+        n = n + 1
+    return n+1
+
 def isPrime(n) :
     global primes
     if (n < 2) :
