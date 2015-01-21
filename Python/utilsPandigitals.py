@@ -19,6 +19,6 @@ def getNPandigitals(n):
     l = l[10-n:10]
     return getListOfPermutations(l)
 
-#print(len(getNPandigitals(10)))
+#print(getNPandigitals(4))
 
 
