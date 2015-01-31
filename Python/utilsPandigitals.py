@@ -19,6 +19,19 @@ def getNPandigitals(n):
     l = l[10-n:10]
     return getListOfPermutations(l)
 
+def isPermutation(a, b):
+    if (len(a) != len(b)):
+        return False
+    for i in a:
+        if (not(i in b)):
+            return False
+        else:
+            j = b.index(i)
+            b = b[0:j] + b[j+1:]
+    return True
+
 #print(getNPandigitals(4))
+
+print(isPermutation("1231", "3211"))
 
 
