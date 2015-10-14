@@ -3,6 +3,4 @@ ProjectEuler
  
 http://projecteuler.net/progress=ijkilchenko
 
-My solutions to Project Euler problems in Python. 
-
-I lost the solutions to problems 19, 20, 21, and 22...
+My solutions to more than 50 of the first Project Euler problems in various languages (mostly Python). 
