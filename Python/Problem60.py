@@ -1,6 +1,8 @@
 import utilsPrimes as utils
 import logging
 import numpy as np
+import itertools
+from functools import reduce
 from collections import defaultdict
 
 logging.basicConfig(level=logging.DEBUG)
@@ -8,18 +10,16 @@ logger = logging.getLogger(__name__)
 
 
 def make_pairs(N):
-  """Makes a prime pairs graph and a number of edges dictionary. 
+  """Makes a prime pairs graph.
   
   Args:
-    N: Largest possibl3 prime in the prime pairs graph.
+    N: Largest possible prime in the prime pairs graph.
 
   Returns:
-    A dictionary and a number of edges dictionary (as a tuple).
+    A dictionary. 
   """
 
   g = defaultdict(lambda: [])
-  # Maps the number of edges to the list of nodes which have that many edges.
-  v = defaultdict(lambda: [])
 
   for i in range(3, N):
     if not utils.isPrime(i):
@@ -36,66 +36,115 @@ def make_pairs(N):
       g[i].append(j)
       g[j].append(i)
 
-  for node in g:
-    v[len(g[node])].append(node)
-
-  return g, v
+  return g
 
 
-def is_in_clique(n, g):
-  """Returns whether or not node n is in a clique. 
+def is_clique(c, g):
+  """Returns whether or not nodes in c form a clique.  
 
   Args:
-    n: node to check if is in clique or not.
+    c: list of nodes. 
     g: prime pairs graph.
 
   Returns:
-    Set of nodes in the clique that contains n. 
+    A boolean indicating whether or not nodes in c form a clique. 
   """
 
-  neighbors = g[n]
-  common_nodes = set(neighbors).union((n,))
+  common_nodes = set([node for node in c])
+
+  for node in c:
+    common_nodes = common_nodes.intersection(set(g[node]).union((node,)))
+
+  if common_nodes == set(c):
+    return True
+  else:
+    return False
+
+
+def get_next_combs(N, n=4):
+  """Inspired by: https://math.stackexchange.com/a/89453/100900
+  """
+
+  A = [0]*len(N)
+  L = [set()]
+  S = [0]
+  j = 1
+  while any(elem is not None for elem in A):
+    i_star = np.argmin([S[A[i]] + N[i] if A[i] is not None else np.inf for i in range(0, len(N))])
+    comb = L[A[i_star]].union((N[i_star],))
+    L.append(comb)
+    if len(comb) == n:
+      yield comb
+    S.append(S[A[i_star]] + N[i_star])
+    i = A[i_star]
+    A[i_star] = None
+    for i_next in range(i+1, len(L)):
+      if N[i_star] > max(L[i_next]):
+        A[i_star] = i_next
+        break
+
+
+def grow_clique(c, g):
+  """Takes a clique c and checks all its neighbors to see if the clique can be 
+  grown and returns all valid bigger cliques that contain c.
+  """
+
+  neighbors = reduce(lambda x, y: x.union(y), [g[node] for node in c], set())
+
+  cliques = []
   for neighbor in neighbors:
-    common_nodes = common_nodes.intersection(set(g[neighbor]).union((neighbor,)))
-  return common_nodes
+    new_clique = list(c) + [neighbor]
+    if neighbor not in c and is_clique(new_clique, g):
+      cliques.append(new_clique)
+ 
+  return cliques
 
 if __name__ == '__main__':
   # Tests
-  g, v = make_pairs(10)
+  g = make_pairs(20)
   assert(7 in g[3])
   assert(3 in g[7])
-  assert(v[1] == [3, 7])
 
-  assert(is_in_clique(3, g) == set((3, 7)))
+  assert(is_clique([3, 7], g) == True)
+
+  # print(grow_clique([1, 2], {1:[2,3], 2:[1,3], 3:[1,2]}))
+
+  for comb in get_next_combs(list(g.keys()), 3):
+    # print(sum(comb), comb)
+    pass
 
   logger.info('Tests passed. ')
 
-  N = 10**4  # Largest prime in the prime pairs graph. 
-  g, v = make_pairs(N)
+  N = 3000  # Largest prime in the prime pairs graph. 
+  g = make_pairs(N)
+
+  cliques = [c for c in itertools.combinations(g, 3) if is_clique(c, g)]
+
+  for _ in range(1, 3):
+    new_cliques = []
+    for clique in cliques:
+      new_cliques.extend(grow_clique(clique, g))
+    cliques = new_cliques
+    print(cliques)
 
   lowest_sum = np.inf
   lowest_clique = None
 
-  clique_size = 4
-  for num_edges in range(clique_size-1, max(v)):
-    for node in v[num_edges]:
-      clique = is_in_clique(node, g)
-      if clique and len(clique) == clique_size:
-        if sum(clique) < lowest_sum:
-          lowest_sum = sum(clique)
-          lowest_clique = clique
-
-  print(lowest_sum)
-  print(lowest_clique)
-
   """
-  logger.info(len(g))
-  logger.info(len(v[5]))
-  logger.info(len(v[6]))
-  logger.info(v[6])
-  logger.info(g)
-  logger.info(v)
-  """
+  subgraphs = get_next_combs(list(g.keys()), 5)
+
+  for i, subgraph in enumerate(subgraphs):
+    if i % 100 == 0:
+      logger.info('Checking graph %i (with sum %i)', 
+                  i, sum(subgraph))
+    if is_clique(subgraph, g) and sum(subgraph) < lowest_sum:
+      lowest_sum = sum(subgraph)
+      lowest_clique = subgraph
+      break
+
+  logger.info(lowest_sum)
+  logger.info(lowest_clique)
 
   logger.info('Finished. ')
+  """
 
