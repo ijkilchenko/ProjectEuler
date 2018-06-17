@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
   logger.info('Tests passed. ')
 
-  N = 3000  # Largest prime in the prime pairs graph. 
+  N = 9000  # Largest prime in the prime pairs graph. 
   g = make_pairs(N)
 
   cliques = [c for c in itertools.combinations(g, 3) if is_clique(c, g)]
@@ -125,26 +125,17 @@ if __name__ == '__main__':
     for clique in cliques:
       new_cliques.extend(grow_clique(clique, g))
     cliques = new_cliques
-    print(cliques)
 
   lowest_sum = np.inf
   lowest_clique = None
 
-  """
-  subgraphs = get_next_combs(list(g.keys()), 5)
-
-  for i, subgraph in enumerate(subgraphs):
-    if i % 100 == 0:
-      logger.info('Checking graph %i (with sum %i)', 
-                  i, sum(subgraph))
-    if is_clique(subgraph, g) and sum(subgraph) < lowest_sum:
-      lowest_sum = sum(subgraph)
-      lowest_clique = subgraph
-      break
+  for clique in cliques:
+    if sum(clique) < lowest_sum:
+      lowest_sum = sum(clique)
+      lowest_clique = clique
 
   logger.info(lowest_sum)
   logger.info(lowest_clique)
 
   logger.info('Finished. ')
-  """
 
