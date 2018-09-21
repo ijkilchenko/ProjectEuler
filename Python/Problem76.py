@@ -22,8 +22,9 @@ def get_parts(n):
         break
       else:
         partitions.add((i,) + part)
-  
-  cache[n] = sorted(list(partitions), key=lambda x: x[0])
+  partitions = list(partitions)
+  partitions.sort(key=lambda x: x[0])
+  cache[n] = partitions
   
   return cache[n]
 
@@ -33,5 +34,5 @@ def get_num_parts(n):
   return len(all_parts)
 
 if __name__ == '__main__':
-  print(get_num_parts(70))
+  print(get_num_parts(100))
 
