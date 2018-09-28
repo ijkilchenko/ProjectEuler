@@ -1,67 +1,61 @@
 from math import floor
 
-cache = {}
-
-def get_parts(n):
+class V2:
   """
-  Returns the partitions of n, including n,
-  where the partitions are sorted in increasing
-  order keyed by the first number in each partition.
-  Each partition is sorted in decreasing order.
-
-  E.g. if n = 4:
-  [(1, 1, 1, 1, 1), (2, 1, 1, 1), (2, 2, 1), (3, 1, 1), (3, 2), (4, 1), (5,)]
-  Observe that successive partition starts with the same 
-  or larger number than the previous. 
-  Inside each partition, the numbers are sorted in decreasing
-  order.
+  Proposal:
+  We do not need to work with partitions explicitly. Instead we can keep track
+  of how many of the partitions start with n or less (still using the sorting 
+  scheme from V1). If we can reformulate the problem to work without explicit
+  partitions, we will essentially be skipping the inner for-loop in the 
+  recursive step of V1.
+  
+  E.g.
+  
+  Let's say we have the following data-structure for each n:
+  
+  n | i, # of partitions of n, sorted with our scheme, that start with i or less 
+  
+  1 | 1, 1
+  
+  2 | 1, 1
+    | 2, 2
+    
+  3 | 1, 1
+    | 2, 2
+    | 3, 3
+    
+  4 | 1, 1
+    | 2, 3
+    | 3, 4
+    | 4, 5 <- last entry is the "answer" for this n
+    
+  Explicit partitions (to make reading easier):
+  n=1 > [(1,)]
+  n=2 > [(1, 1), (2,)]
+  n=3 > [(1, 1, 1), (2, 1), (3,)]
+  n=4 > [(1, 1, 1, 1), (2, 1, 1), (2, 2), (3, 1), (4,)]
+  
+  Now we use the data-structures for each n to derive the data-structure for n=5
+  
+  5 | 1, how many partitions of n=4 start with 1 or less? 1
+    | 2, how many partitions of n=3 start with 2 or less? 2
+    | 3, '' n=2 '' with 3 or less? 2
+    | 4, '' n=1 '' with 4 or less? 1
+    
+  1+2+2+1=6
+  plus the "root"
+  7 <- this is the correct answer for the number of partitions of n=5 including 
+  root.
+  
+  So now we can complete the data-structure for n=5
+  
+  5 | 1, 1
+    | 2, 2
+    | 3, 2
+    | 4, 1
+    | 5, 7
   """
-
-  # Check if we have done this subproblem before
-  if n in cache:
-    return cache[n]
-  
-  # Base case (only need one because the recursive function
-  # doesn't jump more than one value backwards). 
-  if n == 1:
-    return [(1,)]
-  
-  # Recursive step
-  # We "subtract" off numbers from n, and each number then
-  # "leads" the cached partitions.
-  # E.g. if n = 4:
-  # We subtract off 1, and get the cached partitions for n=3,
-  # we then add only the partitions of n=3 which start with 1 
-  # or less. Then we do the same thing with 2 and add only the
-  # partitions of n=2 which start with 2 or less. Etc. This
-  # strategy guarantees that we are adding unique partitions 
-  # to the list (because we first add only partitions that start
-  # with a 1, then only the partitions that start with a 2, etc.).
-  # This scheme also keeps our list of partitions sorted (as
-  # described in the docstring). Because they are sorted, this
-  # allows us to use 'break' to skip the partitions that start
-  # with a number larger than the one we used for the "subtraction."
-  partitions = []
-  for i in range(1, n):  # These are the numbers we are "subtracting"
-    parts = get_parts(n-i)  # Get partitions in the sorted order.
-    for part in parts:
-      # Keep adding partitions until this sorting condition is violated
-      if part[0] > i:  
-        break
-      else:
-        partitions.append((i,) + part)
-  # Append the "root" (turned out to be easier to do it this way)
-  partitions.append((n,))  
-  cache[n] = partitions
-  
-  return cache[n]
-
-
-def get_num_parts(n):
-  all_parts = get_parts(n)
-  print(all_parts)
-  return len(all_parts) - 1
 
 if __name__ == '__main__':
-  print(get_num_parts(5))
+  print(V2.get_num_parts(5))
 
